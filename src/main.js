@@ -1,10 +1,33 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
+import Vue from 'vue';
+import App from './App.vue';
+import router from './router';
 
-Vue.config.productionTip = false
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+import axios from 'axios';
+
+Vue.use(ElementUI);
+
+Vue.prototype.$axios = axios;
+axios.defaults.baseURL = 'http://127.0.0.1:8081';
+
+Vue.config.productionTip = false;
 
 new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app')
+    router,
+    render: h => h(App)
+}).$mount('#app');
+
+router.beforeEach((to, from, next) => {
+    if (to.meta.auth) {
+        if (localStorage.getItem('user')) {
+            next();
+        } else {
+            alert("请先登陆！");
+            next(false);
+        }
+    } else {
+        next();
+    }
+});
